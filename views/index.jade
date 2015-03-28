@@ -3,3 +3,8 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+
+  if everyauth.loggedIn
+    p Hello, #{req.session.auth.github.user.name}!
+  else
+    a(href="./auth/github") Sign in with GitHub

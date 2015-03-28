@@ -1,16 +1,36 @@
 var express = require('express');
+var session = require('express-session');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var fs = require('fs');
+var everyauth = require('everyauth');
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
-var app = express();
-
 var user = require('./model/user');
+
+var credentials = JSON.parse(fs.readFileSync('./github.credentials.encrypted', 'UTF-8'));
+everyauth.github
+  .appId(credentials.appId)
+  .appSecret(credentials.appSecret)
+  .scope('user')
+  .findOrCreateUser(function(session, accessToken, accessTokenSecret, githubUserData) {
+    var promise = this.Promise();
+    user.authenticateUser(accessToken, accessTokenSecret, githubUserData, promise);
+    return promise;
+  })
+  .handleAuthCallbackError( function (req, res) {
+    console.log('auth callback error');
+  })
+  .redirectPath('/');
+
+var app = express();
+everyauth.helpExpress(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,6 +43,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Session / authentication
+app.use(session({
+  secret: "appfogV2",
+  saveUninitialized: true,
+  resave: false,
+  // name: "hamburglar",
+  cookie: {maxAge: 60*60*1000}
+}));
+app.use(everyauth.middleware());
 
 app.use('/', routes);
 app.use('/users', users);
