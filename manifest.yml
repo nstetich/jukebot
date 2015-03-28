@@ -1,0 +1,5 @@
+applications:
+- name: jukebot-4d32
+  memory: 256M
+  instances: 1
+  services:
