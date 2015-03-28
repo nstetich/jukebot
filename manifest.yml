@@ -3,3 +3,4 @@ applications:
   memory: 256M
   instances: 1
   services:
+    - jukebot-4d32-db-01
