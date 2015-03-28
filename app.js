@@ -30,7 +30,6 @@ everyauth.github
   .redirectPath('/');
 
 var app = express();
-everyauth.helpExpress(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

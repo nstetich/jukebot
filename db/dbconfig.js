@@ -1,5 +1,5 @@
-var mysql = require('mysql');
 var connectionInfo = {
+  host: 'localhost',
   user: 'jukebot',
   password: 'Tun3z',
   database: 'jukebot'
@@ -20,10 +20,10 @@ if (process.env.VCAP_SERVICES) {
   }
 }
 
-exports.query = function(query, callback) {
-  var connection = mysql.createConnection(connectionInfo);
-  connection.query(query, function(queryError, result) {
-    callback(queryError, result);
-  });
-  connection.end();
-};
+var knex = require('knex')({
+  client: 'mysql',
+  connection: connectionInfo
+});
+
+exports.knex = knex;
+exports.bookshelf = require('bookshelf')(knex);
