@@ -10,7 +10,7 @@ var fs = require('fs');
 var everyauth = require('everyauth');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var api = require('./routes/api');
 
 var user = require('./model/user');
 
@@ -54,7 +54,7 @@ app.use(session({
 app.use(everyauth.middleware());
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
