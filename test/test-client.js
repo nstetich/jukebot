@@ -13,18 +13,22 @@ describe('Client', function () {
   var knex, Client;
 
   beforeEach(function () {
+    // TODO: Figure out how to get this to not cache--new database for every test
     knex = require('knex')({
       client: 'sqlite',
       connection: {
         filename: ':memory:'
       }
     });
-    knex.schema.dropTableIfExists('clients');
-    Client = proxyquire('../model/client', {
-      dbConfig: {
-        knex: knex,
-        bookshelf: require('bookshelf')(knex),
-      }
+    console.log("Dropping table");
+    return knex.schema.dropTableIfExists('clients').then(function () {
+      Client = proxyquire('../model/client', {
+        dbConfig: {
+          knex: knex,
+          bookshelf: require('bookshelf')(knex),
+        }
+      });
+      return Client.loaded;
     });
   });
 
