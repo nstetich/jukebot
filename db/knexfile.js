@@ -1,6 +1,13 @@
 var _ = require('lodash');
 
 configs = {
+  unit: {
+    client: 'sqlite',
+    connection: {
+      filename: ':memory:'
+    }
+  },
+
   development: {
     client: 'mysql',
     connection: {

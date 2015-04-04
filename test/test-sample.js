@@ -1,5 +1,3 @@
-/* globals assert */
-
 var assert = require('chai').assert;
 
 describe("test suite", function() {
