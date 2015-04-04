@@ -14,6 +14,15 @@ var api = require('./routes/api');
 
 var user = require('./model/user');
 
+// TODO: Is there a way to wait for this to execute before proceeding with startup?
+var db = require('./db/dbconfig');
+db.knex.migrate.latest({
+  directory: './db/migrations'
+}).catch(function (err) {
+  console.log("FATAL ERROR: Unable to run database migration scripts. " + JSON.stringify(err));
+  process.exit(1);
+});
+
 var credentials = JSON.parse(fs.readFileSync('./github.credentials.encrypted', 'UTF-8'));
 everyauth.github
   .appId(credentials.appId)
@@ -48,7 +57,6 @@ app.use(session({
   secret: "appfogV2",
   saveUninitialized: true,
   resave: false,
-  // name: "hamburglar",
   cookie: {maxAge: 60*60*1000}
 }));
 app.use(everyauth.middleware());
