@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+var _ = require('lodash');
+
 var Client = require('../model/client.js');
 
 router.get('/clients', function(req, res) {
@@ -13,7 +15,20 @@ router.get('/clients', function(req, res) {
 });
 
 router.get('/clients/:id', function (req, res) {
-  new Client({id: req.params.id}).fetch()
+  new Client({api_client_id: req.params.id}).fetch()
+    .then(function (model) {
+      if (model) {
+        res.send(model);
+      } else {
+        res.status(404).send();
+      }
+    }).catch(function (err) {
+      res.status(400).send(err);
+    });
+});
+
+router.put('/clients/:id', function (req, res) {
+  new Client(_.extend(req.body, {'api_client_id': req.params.id})).save()
     .then(function (model) {
       res.send(model);
     }).catch(function (err) {
