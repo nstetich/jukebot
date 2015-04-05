@@ -2,9 +2,14 @@ var express = require('express');
 var router = express.Router();
 
 var _ = require('lodash');
+var Promise = require('bluebird');
 
 var Client = require('../model/client.js');
 var ClientToken = require('../model/client-token.js');
+
+function AuthException () {
+
+}
 
 router.get('/clients', function(req, res) {
   new Client().fetchAll()
@@ -46,16 +51,25 @@ router.post('/clients', function (req, res) {
     });
 });
 
-router.post('/tokens/:clientId', function (req, res) {
-  new Client({api_client_id: req.params.clientId}).fetch()
+router.post('/tokens', function (req, res) {
+  var credentials = req.body;
+  new Client({api_client_id: credentials.clientId}).fetch()
     .then(function (model) {
-      return new ClientToken({client_id: model.id}).save()
+      if (credentials.clientSecret == model.get('api_client_secret')) {
+        return new ClientToken({client_id: model.id}).save()
+      } else {
+        return Promise.reject({
+          status: 401,
+          message: "Not authorized."
+        });
+      }
     }).then(function (model) {
       res.send({
         token: model.get('api_client_token')
       });
     }).catch (function (err) {
-      res.status(400).send(err);
+      status = err.status || 400
+      res.status(status).send(err);
     });
 });
 
