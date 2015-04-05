@@ -7,8 +7,6 @@ module.exports = function(server) {
   var io = require('socket.io')(server);
 
   io.use(function authenticate(socket, next) {
-    console.log("----");
-    console.log(socket);
     var token = socket.handshake.query.token;
     new ClientToken({api_client_token: token}).fetch()
       .then(function (model) {
