@@ -1,7 +1,6 @@
 var _ = require('lodash');
 var db = require('../db/dbconfig');
 var crypto = require('crypto');
-var _ = require('lodash');
 
 function randBytes(n) {
   return new Buffer(crypto.randomBytes(n)).toString('hex');
