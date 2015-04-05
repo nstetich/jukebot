@@ -6,7 +6,7 @@ var moment = require('moment');
 var Client = require('./client')
 
 function randBytes(n) {
-  return new Buffer(crypto.randomBytes(n)).toString('hex');
+  return new Buffer(crypto.randomBytes(n)).toString('base64');
 }
 
 var ClientToken = db.bookshelf.Model.extend({
@@ -15,9 +15,9 @@ var ClientToken = db.bookshelf.Model.extend({
   initialize: function () {
     this.on('creating', function () {
       var now = moment();
-      this.set('api_client_token', randBytes(20));
-      this.set('created', now);
-      this.set('expires', moment(now).add(30, 'seconds')); // TODO move to config
+      this.set('api_client_token', randBytes(21));
+      this.set('created', now.toDate());
+      this.set('expires', moment(now).add(30, 'seconds').toDate()); // TODO move to config
     });
   },
 

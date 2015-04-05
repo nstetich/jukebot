@@ -4,6 +4,7 @@ var router = express.Router();
 var _ = require('lodash');
 
 var Client = require('../model/client.js');
+var ClientToken = require('../model/client-token.js');
 
 router.get('/clients', function(req, res) {
   new Client().fetchAll()
@@ -28,7 +29,7 @@ router.get('/clients/:id', function (req, res) {
 });
 
 router.put('/clients/:id', function (req, res) {
-  new Client(_.extend(req.body, {'api_client_id': req.params.id})).save()
+  new Client(_.extend(req.body, {api_client_id: req.params.id})).save()
     .then(function (model) {
       res.send(model);
     }).catch(function (err) {
@@ -41,6 +42,19 @@ router.post('/clients', function (req, res) {
     .then(function (model) {
       res.send(model);
     }).catch(function (err) {
+      res.status(400).send(err);
+    });
+});
+
+router.post('/tokens/:clientId', function (req, res) {
+  new Client({api_client_id: req.params.clientId}).fetch()
+    .then(function (model) {
+      return new ClientToken({client_id: model.id}).save()
+    }).then(function (model) {
+      res.send({
+        token: model.get('api_client_token')
+      });
+    }).catch (function (err) {
       res.status(400).send(err);
     });
 });
