@@ -7,10 +7,6 @@ var Promise = require('bluebird');
 var Client = require('../model/client.js');
 var ClientToken = require('../model/client-token.js');
 
-function AuthException () {
-
-}
-
 router.get('/clients', function(req, res) {
   new Client().fetchAll()
     .then(function (models) {
@@ -68,7 +64,7 @@ router.post('/tokens', function (req, res) {
         token: model.get('api_client_token')
       });
     }).catch (function (err) {
-      status = err.status || 400
+      var status = err.status || 400
       res.status(status).send(err);
     });
 });

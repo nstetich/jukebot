@@ -17,7 +17,7 @@ var ClientToken = db.bookshelf.Model.extend({
       var now = moment();
       this.set('api_client_token', randBytes(21));
       this.set('created', now.toDate());
-      this.set('expires', moment(now).add(30, 'seconds').toDate()); // TODO move to config
+      this.set('expires', moment(now).add(1, 'hour').toDate()); // TODO move to config
     });
   },
 
