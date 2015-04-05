@@ -9,4 +9,10 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.get('/sockets', function (req, res) {
+  res.render('sockets', {
+    title: 'Sockets'
+  })
+});
+
 module.exports = router;
