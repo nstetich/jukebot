@@ -1,6 +1,37 @@
+@import url(http://fonts.googleapis.com/css?family=Cookie|Lato);
+
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  /*padding: 50px;*/
+  font: 14px "Lato", sans-serif;
+}
+
+.banner {
+  padding-left: 32px;
+  padding-top: 12px;
+  padding-right: 12px;
+  padding-bottom: 6px;
+  background-color: maroon;
+  color: white;
+}
+
+.app-title {
+  font: 48px "Cookie", cursive;
+}
+
+.top-nav {
+  padding-left: 0;
+  font-size: 16px;
+  list-style-type: none;
+}
+
+.top-nav li {
+  display: inline;
+  margin-right: 24px;
+}
+
+.top-nav a {
+  color: inherit;
+  text-decoration: none;
 }
 
 a {
