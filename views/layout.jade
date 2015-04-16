@@ -7,7 +7,11 @@ html
     .banner
       .app-title Jukebot
       ul.top-nav
-        li: a(href='./auth/github') Log In
+        li
+          if !everyauth.loggedIn
+            a(href='./auth/github') Log In
+          else
+            span Log Out
         li Bogus Link
 
     block content
