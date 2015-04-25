@@ -1,12 +1,13 @@
-var ClientToken = require('../model/client-token');
-var Client = require('../model/client');
+var ClientToken = require('./model/client-token');
+var Client = require('./model/client');
 var moment = require('moment');
 var Promise = require('bluebird');
+var request = Promise.promisifyAll(require('request'));
+var util = require('util');
 
-module.exports = function(server) {
+module.exports = function(io) {
   var socketIds = {};
-
-  var io = require('socket.io')(server);
+  var clients = {};
 
   io.use(function authenticate(socket, next) {
     var token = socket.handshake.query.token;
@@ -16,6 +17,7 @@ module.exports = function(server) {
           console.log("socket.io authenticated!");
           var client_id = model.related('client').get('api_client_id');
           socketIds[client_id] = socket.id;
+          clients[socket.id] = model.related('client');
           console.log("socket ids: ", socketIds);
           next();
         } else {
@@ -28,9 +30,21 @@ module.exports = function(server) {
   });
 
   io.on('connection', function (socket) {
+    var client = clients[socket.id];
+    var slackUrl = client.get('slack_callback_url');
+    console.log("slack url", slackUrl);
+
     socket.emit('news', {hello: 'world'});
-    socket.on('my other event', function (data) {
+    socket.on('trackChange', function (data) {
       console.log(data);
+      request.postAsync({
+        url: slackUrl,
+        json: {
+          text: "Now playing: \"" + data.title + "\" by " + data.artist
+        }
+      }).catch(function (err) {
+        console.log(JSON.stringify(err));
+      });
     });
     socket.on('disconnect', function () {
       console.log('user disconnected');
@@ -38,4 +52,4 @@ module.exports = function(server) {
   });
 
   return io;
-}
+};

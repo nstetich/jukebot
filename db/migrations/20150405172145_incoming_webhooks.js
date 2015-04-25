@@ -4,6 +4,7 @@ exports.up = function(knex, Promise) {
     table.string('name');
     table.string('api_client_id', 20).unique().index();
     table.string('api_client_secret', 40);
+    table.string('slack_callback_url', 255);
   }).then(function () {
     return knex.schema.createTable('users', function (table) {
       table.integer('github_id').primary();

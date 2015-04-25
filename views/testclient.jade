@@ -2,8 +2,20 @@ extends layout
 
 block content
   style.
+    div {
+      margin-bottom: 5px;
+    }
+  
     #token {
       width: 20em;
+    }
+    
+    div.socketAction {
+      width: 300px;
+      border-style: solid;
+      border-radius: 12px;
+      border-width: 2px;
+      padding: 10px;
     }
 
     #console {
@@ -16,10 +28,24 @@ block content
   script(src="/js/testclient.js")
 
   h1= title
-  p Welcome to #{title}
-  div
-    label(for="token") Token:
-    input#token(type="text" value="Nc2z411n+7iq/9Aid8i/llslViUK")
-    button#connect Connect
+  h2 Actions
+  div.socketAction
+    div Connect
+    div
+      label(for="token") Token: 
+      input#token(type="text")
+    div
+      button#connect Connect
+  div.socketAction
+    div Play A Song
+    div
+      label(for="songTitle") Title: 
+      input#songTitle(type="text")
+    div
+      label(for="songArtist") Artist: 
+      input#songArtist(type="text")
+    div
+      button#play Play
+  h2 Console
   div
     textarea#console
