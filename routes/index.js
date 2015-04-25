@@ -9,10 +9,10 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/sockets', function (req, res) {
-  res.render('sockets', {
-    title: 'Sockets'
-  })
+router.get('/testclient', function (req, res) {
+  res.render('testclient', {
+    title: 'Test Client'
+  });
 });
 
 module.exports = router;
