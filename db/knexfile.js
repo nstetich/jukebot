@@ -8,13 +8,20 @@ configs = {
     }
   },
 
+  // development: {
+  //   client: 'mysql',
+  //   connection: {
+  //     host: 'localhost',
+  //     user: 'jukebot',
+  //     password: 'Tun3z',
+  //     database: 'jukebot'
+  //   }
+  // },
+
   development: {
-    client: 'mysql',
+    client: 'sqlite',
     connection: {
-      host: 'localhost',
-      user: 'jukebot',
-      password: 'Tun3z',
-      database: 'jukebot'
+      filename: 'jukebot.db'
     }
   },
 
