@@ -1,10 +1,15 @@
+/* jshint node:true */
+"use strict";
+
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('clients', function (table) {
     table.increments('id').primary();
     table.string('name');
     table.string('api_client_id', 20).unique().index();
     table.string('api_client_secret', 40);
+    table.string('slack_channel_id', 20).unique().index();
     table.string('slack_callback_url', 255);
+    table.string('slack_slash_command_token', 30);
   }).then(function () {
     return knex.schema.createTable('users', function (table) {
       table.integer('github_id').primary();
