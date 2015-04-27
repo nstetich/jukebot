@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var util = require('util');
 
 var _ = require('lodash');
 var Promise = require('bluebird');
@@ -52,7 +53,7 @@ router.post('/tokens', function (req, res) {
   new Client({api_client_id: credentials.clientId}).fetch()
     .then(function (model) {
       if (credentials.clientSecret == model.get('api_client_secret')) {
-        return new ClientToken({client_id: model.id}).save()
+        return new ClientToken({client_id: model.id}).save();
       } else {
         return Promise.reject({
           status: 401,
@@ -67,6 +68,12 @@ router.post('/tokens', function (req, res) {
       var status = err.status || 400
       res.status(status).send(err);
     });
+});
+
+router.post('/slack/commands/jukebot', function (req, res) {
+  var message = req.body;
+  console.log(util.inspect(message));
+  res.status(200).send(JSON.stringify(message));
 });
 
 module.exports = router;
