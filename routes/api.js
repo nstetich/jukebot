@@ -5,8 +5,10 @@ var util = require('util');
 var _ = require('lodash');
 var Promise = require('bluebird');
 
-var Client = require('../model/client.js');
-var ClientToken = require('../model/client-token.js');
+var events = require('../eventbus');
+
+var Client = require('../model/client');
+var ClientToken = require('../model/client-token');
 
 router.get('/clients', function(req, res) {
   new Client().fetchAll()

@@ -4,6 +4,7 @@ var moment = require('moment');
 var Promise = require('bluebird');
 var request = Promise.promisifyAll(require('request'));
 var util = require('util');
+var events = require('./eventbus');
 
 module.exports = function(io) {
   var socketIds = {};
@@ -34,13 +35,17 @@ module.exports = function(io) {
     var slackUrl = client.get('slack_callback_url');
     console.log("slack url", slackUrl);
 
-    socket.emit('news', {hello: 'world'});
-    socket.on('trackChange', function (data) {
+    events.on('command:nextTrack', function (data) {
+      if (data.client_id === client.get('id')) {
+        socket.emit('command:next', {});
+      }
+    });
+    socket.on('event:trackChange', function (data) {
       console.log(data);
       request.postAsync({
         url: slackUrl,
         json: {
-          text: "Now playing: \"" + data.title + "\" by " + data.artist
+          text: ":musical_note: Now playing: \"" + data.title + "\" by " + data.artist
         }
       }).catch(function (err) {
         console.log(JSON.stringify(err));
