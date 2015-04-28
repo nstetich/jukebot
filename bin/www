@@ -22,18 +22,32 @@ app.set('port', port);
 var server = http.createServer(app);
 
 /**
- * Attach Socket.IO
+ * Perform database migrations before starting server.
  */
+var db = require('../db/dbconfig');
 
-app.io.attach(server);
+db.knex.migrate.latest({
+  directory: './db/migrations'
+}).then(function () {
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+  /**
+   * Attach Socket.IO
+   */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+  app.io.attach(server);
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+
+}).catch(function (err) {
+  console.log("FATAL ERROR: Unable to run database migration scripts. " + JSON.stringify(err));
+  process.exit(1);
+});
 
 /**
  * Normalize a port into a number, string, or false.
