@@ -2,8 +2,6 @@ var _ = require('lodash');
 var db = require('../db/dbconfig');
 var crypto = require('crypto');
 
-var SlackIncomingWebhook = require('./incoming-webhook');
-
 function randBytes(n) {
   return new Buffer(crypto.randomBytes(n)).toString('hex');
 }
@@ -20,10 +18,6 @@ var Client = db.bookshelf.Model.extend({
         this.set("api_client_secret", randBytes(20));
       }
     });
-  },
-
-  slackIncomingWebhooks: function () {
-    return this.hasMany(SlackIncomingWebhook);
   }
 });
 
