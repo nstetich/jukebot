@@ -24,59 +24,32 @@ var server = http.createServer(app);
 /**
  * Perform database migrations and seeds before starting server.
  */
-var db = require('../db/dbconfig');
 
-var migrationConfig = {
-  directory: './db/migrations'
-};
-var seedConfig = {
-  directory: './db/seeds'
-};
+ var migrate = require('../db/migrate');
 
-function rollbackDb() {
-  return db.knex.migrate.currentVersion(migrationConfig)
-  .then(function (version) {
-    if (version !== 'none') {
-      console.log("rolling back database version ", version);
-      return db.knex.migrate.rollback(migrationConfig)
-      .then(function () {
-        return rollbackDb();
-      });
-    }
-  });
-}
+ migrate().then(function () {
 
-rollbackDb(migrationConfig)
-.then(function () {
-  console.log("migrating to latest");
-  return db.knex.migrate.latest(migrationConfig);
-})
-.then(function () {
-  console.log("running seed scripts");
-  return db.knex.seed.run(seedConfig);
-})
-.then(function () {
+   /**
+    * Attach Socket.IO
+    */
 
-  /**
-   * Attach Socket.IO
-   */
+   app.io.attach(server);
 
-  app.io.attach(server);
+   /**
+    * Listen on provided port, on all network interfaces.
+    */
 
-  /**
-   * Listen on provided port, on all network interfaces.
-   */
+   server.listen(port);
+   server.on('error', onError);
+   server.on('listening', onListening);
 
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', onListening);
+ })
+ .catch(function (err) {
+   console.log("FATAL ERROR: Unable to run database migration scripts. " + JSON.stringify(err));
+   process.exit(1);
+ });
 
-}).catch(function (err) {
-  console.log("FATAL ERROR: Unable to run database migration scripts. " + JSON.stringify(err));
-  process.exit(1);
-});
-
-/**
+ /**
  * Normalize a port into a number, string, or false.
  */
 
