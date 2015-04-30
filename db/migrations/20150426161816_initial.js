@@ -25,23 +25,14 @@ exports.up = function(knex, Promise) {
       table.dateTime('created');
       table.dateTime('expires');
     });
-  }).then(function () {
-    return knex.schema.createTable('slack_incoming_webhooks', function (table) {
-      table.increments('id').primary();
-      table.integer('client_id').unsigned()
-        .references('id').inTable('clients').notNullable();
-      table.string('url', 255);
-    });
   });
 };
 
 exports.down = function(knex, Promise) {
   return Promise.all([
     knex.schema.dropTable('users'),
-    Promise.all([
-      knex.schema.dropTable('client_tokens'),
-      knex.schema.dropTable('slack_incoming_webhooks')
-    ]).then(function () {
+    knex.schema.dropTable('client_tokens')
+    .then(function () {
       return knex.schema.dropTable('clients');
     })
   ]);

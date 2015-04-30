@@ -22,13 +22,40 @@ app.set('port', port);
 var server = http.createServer(app);
 
 /**
- * Perform database migrations before starting server.
+ * Perform database migrations and seeds before starting server.
  */
 var db = require('../db/dbconfig');
 
-db.knex.migrate.latest({
+var migrationConfig = {
   directory: './db/migrations'
-}).then(function () {
+};
+var seedConfig = {
+  directory: './db/seeds'
+};
+
+function rollbackDb() {
+  return db.knex.migrate.currentVersion(migrationConfig)
+  .then(function (version) {
+    if (version !== 'none') {
+      console.log("rolling back database version ", version);
+      return db.knex.migrate.rollback(migrationConfig)
+      .then(function () {
+        return rollbackDb();
+      });
+    }
+  });
+}
+
+rollbackDb(migrationConfig)
+.then(function () {
+  console.log("migrating to latest");
+  return db.knex.migrate.latest(migrationConfig);
+})
+.then(function () {
+  console.log("running seed scripts");
+  return db.knex.seed.run(seedConfig);
+})
+.then(function () {
 
   /**
    * Attach Socket.IO
